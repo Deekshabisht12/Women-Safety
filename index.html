@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafeSpace - Women's Online Safety</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#667eea,#764ba2);
+min-height:100vh;
+padding:30px;
+color:white;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+}
+
+header{
+text-align:center;
+margin-bottom:30px;
+}
+
+header h1{
+font-size:3rem;
+margin-bottom:10px;
+}
+
+header p{
+font-size:1.1rem;
+opacity:0.9;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+margin-bottom:30px;
+}
+
+.card{
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(10px);
+padding:20px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+.card h3{
+margin-bottom:10px;
+}
+
+.stat{
+font-size:2rem;
+font-weight:bold;
+}
+
+.analyzer{
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(10px);
+padding:25px;
+border-radius:20px;
+margin-bottom:30px;
+}
+
+textarea{
+width:100%;
+height:150px;
+padding:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+margin-top:10px;
+margin-bottom:15px;
+resize:none;
+}
+
+button{
+padding:12px 25px;
+border:none;
+border-radius:30px;
+background:white;
+color:#764ba2;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+transform:scale(1.05);
+}
+
+#result{
+margin-top:20px;
+font-size:20px;
+font-weight:bold;
+}
+
+.pipeline{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+margin-top:20px;
+}
+
+.step{
+background:rgba(255,255,255,0.15);
+padding:15px;
+border-radius:15px;
+text-align:center;
+}
+
+.safety{
+margin-top:30px;
+background:rgba(255,255,255,0.15);
+padding:25px;
+border-radius:20px;
+}
+
+.safety ul{
+margin-top:10px;
+padding-left:20px;
+}
+
+.safety li{
+margin-bottom:10px;
+}
+
+.tokens{
+margin-top:15px;
+}
+
+.token{
+background:white;
+color:#333;
+padding:5px 10px;
+border-radius:20px;
+margin:4px;
+display:inline-block;
+}
+
+.footer{
+margin-top:40px;
+text-align:center;
+opacity:0.8;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+<h1>🛡 SafeSpace</h1>
+<p>
+AI-Powered Abuse Detection System for Women's Online Safety
+</p>
+</header>
+
+<div class="cards">
+
+<div class="card">
+<h3>Messages Scanned</h3>
+<div class="stat" id="total">0</div>
+</div>
+
+<div class="card">
+<h3>Flagged Messages</h3>
+<div class="stat" id="flagged">0</div>
+</div>
+
+<div class="card">
+<h3>Threat Messages</h3>
+<div class="stat" id="threatCount">0</div>
+</div>
+
+<div class="card">
+<h3>Fake Messages</h3>
+<div class="stat" id="fakeCount">0</div>
+</div>
+
+</div>
+
+<div class="analyzer">
+
+<h2>Analyze Social Media Message</h2>
+
+<textarea
+id="message"
+placeholder="Paste a social media message here..."
+></textarea>
+
+<button onclick="analyzeMessage()">
+Analyze Message
+</button>
+
+<div id="result"></div>
+
+<div id="tokens" class="tokens"></div>
+
+</div>
+
+<div class="analyzer">
+
+<h2>🧠 NLP Processing Pipeline</h2>
+
+<div class="pipeline">
+
+<div class="step">
+1️⃣ Tokenization
+</div>
+
+<div class="step">
+2️⃣ Stop-word Removal
+</div>
+
+<div class="step">
+3️⃣ Feature Extraction
+</div>
+
+<div class="step">
+4️⃣ NLP Classification
+</div>
+
+<div class="step">
+5️⃣ Alert Generation
+</div>
+
+</div>
+
+</div>
+
+<div class="safety">
+
+<h2>👩 Women's Online Safety</h2>
+
+<p style="margin-top:10px;">
+This project helps identify abusive, threatening,
+and fake messages targeting women on social media.
+It enables early detection of cyber harassment and
+provides real-time monitoring and reporting support.
+</p>
+
+<ul>
+
+<li>Detect abusive language</li>
+
+<li>Identify threatening content</li>
+
+<li>Flag fake or spam messages</li>
+
+<li>Notify users of suspicious activity</li>
+
+<li>Promote safer online communication</li>
+
+</ul>
+
+</div>
+
+<div class="footer">
+SafeSpace © 2026 | NLP + Machine Learning Project
+</div>
+
+</div>
+
+<script>
+
+let totalMessages = 0;
+let flaggedMessages = 0;
+let threatMessages = 0;
+let fakeMessages = 0;
+
+const abusiveWords = [
+"idiot",
+"stupid",
+"worthless",
+"loser",
+"ugly",
+"bitch"
+];
+
+const threatWords = [
+"kill",
+"hurt",
+"attack",
+"destroy",
+"murder",
+"rape"
+];
+
+const fakeWords = [
+"click here",
+"free money",
+"earn now",
+"dm me",
+"limited offer"
+];
+
+function analyzeMessage(){
+
+let text =
+document.getElementById("message")
+.value.toLowerCase();
+
+if(text===""){
+alert("Please enter a message");
+return;
+}
+
+totalMessages++;
+
+let score = 0;
+
+let isThreat = false;
+let isFake = false;
+
+abusiveWords.forEach(word=>{
+if(text.includes(word)){
+score += 25;
+}
+});
+
+threatWords.forEach(word=>{
+if(text.includes(word)){
+score += 50;
+isThreat = true;
+}
+});
+
+fakeWords.forEach(word=>{
+if(text.includes(word)){
+score += 20;
+isFake = true;
+}
+});
+
+const words = text.split(" ");
+
+let tokenHTML = "";
+
+words.forEach(word=>{
+tokenHTML +=
+`<span class="token">${word}</span>`;
+});
+
+document.getElementById("tokens")
+.innerHTML =
+"<h3>Tokenization Output</h3><br>" +
+tokenHTML;
+
+let result =
+document.getElementById("result");
+
+if(score >= 70){
+
+flaggedMessages++;
+
+result.innerHTML =
+"🚨 FLAGGED MESSAGE DETECTED";
+
+result.style.color = "#ff4d4d";
+
+}
+else if(score >= 40){
+
+result.innerHTML =
+"⚠ WARNING MESSAGE";
+
+result.style.color = "#ffd633";
+
+}
+else{
+
+result.innerHTML =
+"✅ SAFE MESSAGE";
+
+result.style.color = "#00ff99";
+}
+
+if(isThreat){
+threatMessages++;
+}
+
+if(isFake){
+fakeMessages++;
+}
+
+document.getElementById("total")
+.innerText = totalMessages;
+
+document.getElementById("flagged")
+.innerText = flaggedMessages;
+
+document.getElementById("threatCount")
+.innerText = threatMessages;
+
+document.getElementById("fakeCount")
+.innerText = fakeMessages;
+
+}
+
+</script>
+
+</body>
+</html>
